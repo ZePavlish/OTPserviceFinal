@@ -72,3 +72,39 @@ otp (String) — OTP-код, который нужно проверить.
 Статус 200 — Код валиден.
 
 Статус 400 — Код невалиден.
+
+В репозитории проекта OTPserviceFinal используются следующие внешние библиотеки:
+
+PostgreSQL — для работы с базой данных:
+
+org.postgresql:postgresql:42.7.5
+
+Spring Boot Web — для создания REST API:
+
+org.springframework.boot:spring-boot-starter-web
+
+Jackson Databind — для работы с JSON:
+
+com.fasterxml.jackson.core:jackson-databind:2.15.2
+
+JWT — для работы с токенами:
+
+io.jsonwebtoken:jjwt-api:0.11.5
+
+io.jsonwebtoken:jjwt-impl:0.11.5
+
+io.jsonwebtoken:jjwt-jackson:0.11.5
+
+JavaMail — для рассылки email:
+
+com.sun.mail:javax.mail:1.6.2
+
+Slf4j и Logback — для логирования:
+
+org.slf4j:slf4j-api:2.0.7
+
+ch.qos.logback:logback-classic:1.4.8
+
+BCrypt — для шифрования паролей:
+
+org.mindrot:jbcrypt:0.4
