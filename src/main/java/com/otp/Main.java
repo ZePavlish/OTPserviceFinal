@@ -1,5 +1,6 @@
 package com.otp;
 
+import com.otp.Sender.EmailOtpSender;
 import com.otp.services.OtpService;
 import com.otp.controllers.OtpController;
 import com.sun.net.httpserver.HttpServer;
@@ -12,15 +13,18 @@ import java.sql.DriverManager;
 public class Main {
     public static void main(String[] args) {
         try {
-            // Подключение к базе данных PostgreSQL
+            // Подключение к базе данных PostgresSQL
             Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/otp_service", "postgres", "MArio12345");
 
             // Создание сервиса OTP
             OtpService otpService = new OtpService(connection);
 
+            EmailOtpSender emailOtpSender = new EmailOtpSender();
+
             // Создание и запуск HTTP сервера
             HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
-            HttpHandler handler = new OtpController(otpService);
+            HttpHandler handler = new OtpController(otpService, emailOtpSender);
+
             server.createContext("/otp", handler);
             server.start();
 
