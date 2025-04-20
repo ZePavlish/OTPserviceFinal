@@ -1,47 +1,33 @@
 package com.otp;
-import com.otp.services.AuthService;
 
-import com.otp.controllers.AuthController;
-import com.otp.controllers.OtpController;
 import com.otp.services.OtpService;
+import com.otp.controllers.OtpController;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.HttpHandler;
 
 import java.net.InetSocketAddress;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class Main {
     public static void main(String[] args) {
         try {
-            // 1. Инициализируем сервисы
-            AuthService authService = new AuthService();
-            OtpService otpService = new OtpService();
+            // Подключение к базе данных PostgreSQL
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/otp_service", "postgres", "MArio12345");
 
-            // 2. Создаем HTTP-сервер с бэклогом (очередь соединений)
-            HttpServer server = HttpServer.create(
-                    new InetSocketAddress(8080),
-                    50 // бэклог
-            );
+            // Создание сервиса OTP
+            OtpService otpService = new OtpService(connection);
 
-            // 3. Регистрируем обработчики с корневым путем
-            server.createContext("/api/auth", new AuthController(authService));
-            server.createContext("/api/otp", new OtpController(otpService));
-
-            // 4. Настраиваем executor (пул потоков)
-            server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
-
-            // 5. Запускаем сервер
+            // Создание и запуск HTTP сервера
+            HttpServer server = HttpServer.create(new InetSocketAddress(8081), 0);
+            HttpHandler handler = new OtpController(otpService);
+            server.createContext("/otp", handler);
             server.start();
-            System.out.println("✅ Сервер запущен на http://localhost:8080");
 
-            // 6. Добавляем shutdown hook для graceful shutdown
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("🛑 Остановка сервера...");
-                server.stop(1); // задержка перед остановкой (секунды)
-            }));
+            System.out.println("Server started on port 8081");
 
         } catch (Exception e) {
-            System.err.println("❌ Ошибка при запуске сервера:");
             e.printStackTrace();
-            System.exit(1);
         }
     }
 }

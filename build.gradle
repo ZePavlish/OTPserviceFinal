@@ -72,3 +72,4 @@ tasks.named('jar') {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
